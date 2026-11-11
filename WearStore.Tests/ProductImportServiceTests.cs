@@ -1,4 +1,5 @@
-﻿using WearStore.Models;
+﻿using System.Text;
+using WearStore.Models;
 using WearStore.Services;
 
 namespace WearStore.Tests;
@@ -307,5 +308,20 @@ public class ProductImportServiceTests
         {
             File.Delete(path);
         }
+    }
+
+    [Fact]
+    public void ImportFromStream_ValidCsv_IsImported()
+    {
+        var repository = new InMemoryProductRepository();
+        var service = new ProductImportService(repository);
+        var content = string.Join(Environment.NewLine, Header, Row());
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+
+        var result = service.ImportFromStream(stream);
+
+        Assert.Equal(1, result.ImportedCount);
+        Assert.Empty(result.Errors);
+        Assert.Equal("Футболка белая", repository.GetBySku("3001")!.Name);
     }
 }

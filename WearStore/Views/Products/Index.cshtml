@@ -1,0 +1,56 @@
+﻿@model ProductsIndexViewModel
+@{
+    ViewData["Title"] = "Список товаров";
+}
+
+<h1>Товары</h1>
+
+<p>Всего товаров: @Model.TotalCount</p>
+<p>Общая стоимость: @Model.TotalValue.ToString("N0") RUB</p>
+
+@if (Model.Products.Count == 0)
+{
+    <div class="alert alert-info">Товары еще не импортированы.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Артикул</th>
+                    <th>Название</th>
+                    <th>Описание</th>
+                    <th>Цена</th>
+                    <th>Валюта</th>
+                    <th>Категория</th>
+                    <th>Остаток</th>
+                    <th>Активен</th>
+                    <th>Размер</th>
+                    <th>Цвет</th>
+                    <th>Материал</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model.Products)
+                {
+                    <tr>
+                        <td>@product.Sku</td>
+                        <td>@product.Name</td>
+                        <td>@product.Description</td>
+                        <td>@product.Price.ToString("0.##")</td>
+                        <td>@product.Currency</td>
+                        <td>@product.CategoryName</td>
+                        <td>@product.StockQuantity</td>
+                        <td>@(product.IsActive ? "Да" : "Нет")</td>
+                        <td>@product.Size</td>
+                        <td>@product.Color</td>
+                        <td>@product.Material</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<a asp-action="Import" class="btn btn-primary">Импортировать товары</a>

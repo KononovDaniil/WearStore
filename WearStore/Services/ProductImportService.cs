@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Text;
+using System.Globalization;
 using WearStore.Models;
 
 namespace WearStore.Services;
@@ -53,6 +54,27 @@ public class ProductImportService : IProductImportService
         {
             AddError(result, 0, FileReadErrorMessage);
             return result;
+        }
+
+        return ImportFromLines(lines);
+    }
+
+    public ImportResult ImportFromStream(Stream stream)
+    {
+        var lines = new List<string>();
+
+        try
+        {
+            using var reader = new StreamReader(stream, Encoding.UTF8, true);
+            string? line;
+            while ((line = reader.ReadLine()) != null)
+                lines.Add(line);
+        }
+        catch (IOException)
+        {
+            var failed = new ImportResult();
+            AddError(failed, 0, FileReadErrorMessage);
+            return failed;
         }
 
         return ImportFromLines(lines);
