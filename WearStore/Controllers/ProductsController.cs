@@ -84,6 +84,14 @@ public class ProductsController : Controller
         return View("Import", new ImportViewModel { Result = result });
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Clear()
+    {
+        _repository.Clear();
+        return RedirectToAction(nameof(Index));
+    }
+
     private string? ResolveFilePath(string? input)
     {
         if (string.IsNullOrWhiteSpace(input))

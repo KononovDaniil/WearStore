@@ -1,0 +1,3 @@
+﻿sku,name,description,price,currency,category_name,stock,image_url,is_active,size,color,material
+3001,Футболка белая,Летняя футболка из хлопка,990,RUB,Футболки,25,/images/tshirt.jpg,true,M,белый,хлопок
+3002,Джинсы прямые синие,Классические джинсы,3490,RUB,Джинсы,12,/images/jeans.jpg,true,46,синий,деним

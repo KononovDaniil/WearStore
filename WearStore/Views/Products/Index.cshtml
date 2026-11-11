@@ -53,4 +53,13 @@ else
     </div>
 }
 
-<a asp-action="Import" class="btn btn-primary">Импортировать товары</a>
+<div class="d-flex gap-2">
+    <a asp-action="Import" class="btn btn-primary">Импортировать товары</a>
+
+    @if (Model.TotalCount > 0)
+    {
+        <form method="post" asp-controller="Products" asp-action="Clear">
+            <button type="submit" class="btn btn-outline-danger">Очистить список товаров</button>
+        </form>
+    }
+</div>
