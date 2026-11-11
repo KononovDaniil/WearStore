@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="WearStore.Tests/WearStore.Tests.csproj" />
   <Project Path="WearStore/WearStore.csproj" />
 </Solution>
