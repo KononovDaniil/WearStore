@@ -24,11 +24,39 @@ public class ProductsController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public IActionResult Index(string? search, string? category, string? sort)
     {
+        var all = _repository.GetAll();
+        IEnumerable<Product> query = all;
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            string term = search.Trim();
+            query = query.Where(p => p.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(category))
+        {
+            query = query.Where(p => string.Equals(p.CategoryName, category, StringComparison.OrdinalIgnoreCase));
+        }
+
+        query = sort switch
+        {
+            "price_asc" => query.OrderBy(p => p.Price),
+            "price_desc" => query.OrderByDescending(p => p.Price),
+            "stock_asc" => query.OrderBy(p => p.StockQuantity),
+            "stock_desc" => query.OrderByDescending(p => p.StockQuantity),
+            _ => query
+        };
+
         var viewModel = new ProductsIndexViewModel
         {
-            Products = _repository.GetAll()
+            Products = query.ToList(),
+            Categories = all.Select(p => p.CategoryName).Distinct().OrderBy(c => c).ToList(),
+            Search = search?.Trim() ?? string.Empty,
+            Category = category ?? string.Empty,
+            Sort = sort ?? string.Empty,
+            AllCount = all.Count
         };
 
         return View(viewModel);

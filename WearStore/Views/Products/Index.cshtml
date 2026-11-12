@@ -1,16 +1,50 @@
 ﻿@model ProductsIndexViewModel
 @{
     ViewData["Title"] = "Список товаров";
+    bool hasFilter = !string.IsNullOrEmpty(Model.Search) || !string.IsNullOrEmpty(Model.Category);
 }
 
 <h1>Товары</h1>
 
-<p>Всего товаров: @Model.TotalCount</p>
+@if (Model.AllCount > 0)
+{
+    <form method="get" asp-controller="Products" asp-action="Index" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="Поиск по названию" />
+        </div>
+        <div class="col-md-3">
+            <select name="category" class="form-select">
+                <option value="">Все категории</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category" selected="@(category == Model.Category)">@category</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="sort" class="form-select">
+                <option value="" selected="@(Model.Sort == "")">Без сортировки</option>
+                <option value="price_asc" selected="@(Model.Sort == "price_asc")">Цена: по возрастанию</option>
+                <option value="price_desc" selected="@(Model.Sort == "price_desc")">Цена: по убыванию</option>
+                <option value="stock_asc" selected="@(Model.Sort == "stock_asc")">Остаток: по возрастанию</option>
+                <option value="stock_desc" selected="@(Model.Sort == "stock_desc")">Остаток: по убыванию</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Применить</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Сброс</a>
+        </div>
+    </form>
+}
+
+<p>Найдено товаров: @Model.TotalCount</p>
 <p>Общая стоимость: @Model.TotalValue.ToString("N0") RUB</p>
 
 @if (Model.Products.Count == 0)
 {
-    <div class="alert alert-info">Товары еще не импортированы.</div>
+    <div class="alert alert-info">
+        @(hasFilter ? "По вашему запросу ничего не найдено." : "Товары еще не импортированы.")
+    </div>
 }
 else
 {
@@ -56,7 +90,7 @@ else
 <div class="d-flex gap-2">
     <a asp-action="Import" class="btn btn-primary">Импортировать товары</a>
 
-    @if (Model.TotalCount > 0)
+    @if (Model.AllCount > 0)
     {
         <form method="post" asp-controller="Products" asp-action="Clear">
             <button type="submit" class="btn btn-outline-danger">Очистить список товаров</button>
